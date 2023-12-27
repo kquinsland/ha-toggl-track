@@ -1,0 +1,10 @@
+---
+# See: https://yamllint.readthedocs.io/en/stable/configuration.html#configuration
+extends: default
+
+rules:
+  line-length:
+    # A reasonable middle ground that should work for retina and standard density screens alike.
+    # Don't outright reject but warn to nudge author into a more considerate formatting
+    max: 120
+    level: warning

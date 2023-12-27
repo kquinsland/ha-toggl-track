@@ -1,0 +1,15 @@
+---
+##
+# Config file for git pre-commit hook.
+# See: https://github.com/DavidAnson/markdownlint
+##
+
+# Default state for all rules which can be checked here:
+# https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+default: true
+
+# Path to configuration file to extend
+extends: null
+
+# Disable line length check
+MD013: false

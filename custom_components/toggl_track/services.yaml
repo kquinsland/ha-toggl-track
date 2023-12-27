@@ -1,0 +1,104 @@
+# Toggl can take a lot of different paramms when creating a service but only a few are REQUIRED.
+# Note that the values here need to match up with the voluputous schema in the service.py file
+##
+new_time_entry:
+  fields:
+    description:
+      required: true
+      advanced: false
+      example: "Cleaning the house"
+      default: "Home Assistant Toggl Track Time Entry"
+      selector:
+        text:
+
+    # V9 of the API will not automatically select a workspace if you don't provide one.
+    # One MUST be provided even if the user is on free plan / has only one workspace.
+    # To make things a bit easier, allow setting the workspace ID directly or by selecting
+    #   a toggl_track sensor entity that will provide the workspace ID
+    ##
+    workspace_id:
+      required: false
+      advanced: true
+      example: "1234567"
+      selector:
+        text:
+
+    workspace_id_entity_id:
+      required: false
+      advanced: true
+      # Example value that can be passed for this field
+      example: "sensor.your_toggl_track_workspace_name"
+      selector:
+        entity:
+          multiple: false
+          filter:
+            - integration: toggl_track
+              domain: sensor
+
+    # List of strings that can be added to the time track entry
+    tags:
+      required: false
+      advanced: true
+      # Example value that can be passed for this field
+      example:
+        - "tag1"
+        - "tag2"
+        - "tag3"
+      default:
+        - "HomeAssistant"
+      selector:
+        text:
+          # Each line is an entry in the list
+          multiple: true
+
+    # Toggl Doesn't really surface this in the UI consistently but it's possible to explicitly set what created
+    #   the particular entry. This value is seperate from the tags and is not required.
+    created_with:
+      required: false
+      advanced: true
+      example: "some-automation-name"
+      default: "ha-toggl-track"
+      # Generic UI element allows user to type in free-form text since the number input isn't appropriate here
+      selector:
+        text:
+
+    # Boolean value that will set the time entry to billable or not. This changes how time entries show up in reports.
+    billable:
+      required: false
+      advanced: true
+      default: False
+      selector:
+        boolean:
+
+# Despite the "there can only be one time entry active per account", the API still requires
+#  a time entry ID AND workspaace ID to be passed when stopping a time entry.
+##
+stop_time_entry:
+  fields:
+    workspace_id_entity_id:
+      required: false
+      advanced: true
+      # Example value that can be passed for this field
+      example: "sensor.your_toggl_track_workspace_name"
+      selector:
+        entity:
+          multiple: false
+          filter:
+            - integration: toggl_track
+              domain: sensor
+
+    # Alternate way to set the workspace ID if you don't want to use the entity selector
+    workspace_id:
+      required: false
+      advanced: true
+      example: "1234567"
+      selector:
+        text:
+
+    # Alternate way to set the time entry ID if you don't want to use the entity selector
+    id:
+      required: false
+      advanced: false
+      example: "1234567"
+      selector:
+        text:

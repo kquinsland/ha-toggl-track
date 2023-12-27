@@ -1,0 +1,73 @@
+{
+    "title": "Toggl Track",
+    "config": {
+        "step": {
+            "user": {
+                "data": {
+                    "api_key": "[%key:common::config_flow::data::api_token%]",
+                    "refresh_interval_sec": "Polling Interval (in seconds)"
+                },
+                "data_description": {
+                    "api_key": "Get this from your Toggl Track Profile.",
+                    "refresh_interval_sec": "How often to poll Toggl Track for new data."
+                },
+                "description": "Please enter your API token from your [Toggl Track Profile page]({profile_url})"
+            },
+            "workspaces": {
+                "title": "Workspace Selection",
+                "description": "Select the Workspace(s) to create sensors for.",
+                "data": {
+                    "workspaces": "Workspaces"
+                },
+                "data_description": {
+                    "workspaces": "Get this from your Toggl Track Profile."
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+            "forbidden": "[%key:common::config_flow::error::invalid_api_key%]",
+            "unknown": "[%key:common::config_flow::error::unknown%]",
+            "already_configured": "[%key:common::config_flow::error::already_configured%]"
+        },
+        "abort": {
+            "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]",
+            "unknown": "Unknown error occurred. Check logs for more details."
+        },
+        "create_entry": {
+            "default": "[%key:common::config_flow::create_entry::authenticated%]"
+        }
+    },
+    "services": {
+        "new_time_entry": {
+            "name": "[%key:common::action::start%]",
+            "description": "Creates a new Time Entry.",
+            "fields": {
+                "description": {
+                    "name": "Description",
+                    "description": "Time Entry title."
+                },
+                "workspace_id": {
+                    "name": "Worksapce ID",
+                    "description": "Numeric ID of the Workspace to create the Time Entry in."
+                },
+                "workspace_id_entity_id": {
+                    "name": "Entity with workspace ID attribute",
+                    "description": "TODO."
+                },
+                "tags": {
+                    "name": "Tags",
+                    "description": "Strings to associate with the Time Entry."
+                },
+                "created_with": {
+                    "name": "Created With",
+                    "description": "Unique string to identify the app that created the Time Entry. Different from Tags, not typically displayed."
+                },
+                "billable": {
+                    "name": "Billable",
+                    "description": "Indicates whether the Time Entry is billable or not."
+                }
+            }
+        }
+    }
+}
