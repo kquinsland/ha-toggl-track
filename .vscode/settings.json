@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
         "autofix",
+        "autolabeler",
+        "commitish",
         "devcontainer",
         "doctoc",
         "HACS",
