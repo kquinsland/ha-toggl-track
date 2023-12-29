@@ -35,6 +35,13 @@ new_time_entry:
             - integration: toggl_track
               domain: sensor
 
+    project_id:
+      required: false
+      advanced: true
+      example: "1234567"
+      selector:
+        text:
+
     # List of strings that can be added to the time track entry
     tags:
       required: false
