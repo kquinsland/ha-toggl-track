@@ -1,6 +1,5 @@
 {
   "name": "Toggl Track",
   "render_readme": true,
-  "iot_class": "cloud_polling",
   "homeassistant": "2022.12.0"
 }
