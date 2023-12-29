@@ -143,7 +143,8 @@ def async_register_services(
         # At least as far as I can tell, toggl will not return anything for the create call?
         # If that's true, may want to change how service is registered
         if call.return_response:
-            return created_time_entry.model_dump()
+            # Pydantic 1.x uses .dict() instead of model_dump()
+            return created_time_entry.dict()
         # set support_response to optional, but still get error when returning none
         # so return empty dict for now
         return None
@@ -185,7 +186,8 @@ def async_register_services(
         _LOGGER.debug("Result of stop_time_entry: %s", stopped_te)
 
         if call.return_response:
-            return stopped_te.model_dump()
+            # Pydantic 1.x uses .dict() instead of model_dump()
+            return stopped_te.dict()
         return {}
 
     # Bail if the service has already been registered

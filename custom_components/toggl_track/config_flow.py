@@ -1,15 +1,14 @@
 """implements graphical configuration flow for setting up Toggl Track integration."""
 from http import HTTPStatus
-from aiohttp.client_exceptions import ClientResponseError
 import logging
 from typing import Any, Optional
 
+from aiohttp.client_exceptions import ClientResponseError
 from lib_toggl.account import Account
 from lib_toggl.client import Toggl
-from requests.exceptions import HTTPError
 import voluptuous as vol
 
-from homeassistant import config_entries, core
+from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_SCAN_INTERVAL
 from homeassistant.data_entry_flow import FlowResult
 import homeassistant.helpers.config_validation as cv
