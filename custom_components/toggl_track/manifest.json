@@ -1,20 +1,21 @@
 {
-    "codeowners": [
-        "@kquinsland"
-    ],
-    "config_flow": true,
-    "dependencies": [
-        "sensor"
-    ],
-    "documentation": "https://github.com/kquinsland/ha-toggl/",
-    "domain": "toggl_track",
-    "iot_class": "cloud_polling",
-    "name": "Toggl Track",
-    "requirements": [
-        "lib-toggl==0.1.4"
-    ],
-    "version": "0.0.1",
-    "loggers": [
-        "custom_components.toggl_track"
-    ]
+  "codeowners": [
+    "@kquinsland"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "sensor"
+  ],
+  "documentation": "https://github.com/kquinsland/ha-toggl/",
+  "domain": "toggl_track",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/kquinsland/ha-toggl-track/issues",
+  "loggers": [
+    "custom_components.toggl_track"
+  ],
+  "name": "Toggl Track",
+  "requirements": [
+    "lib-toggl==0.1.4"
+  ],
+  "version": "0.0.1"
 }
