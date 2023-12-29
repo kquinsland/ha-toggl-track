@@ -1,6 +1,7 @@
+---
 # See: https://hacs.xyz/docs/publish/action
 ##
-name: Validate
+name: Validate repo is HACS compatible
 
 on:
   push:
