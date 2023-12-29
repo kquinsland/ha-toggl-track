@@ -27,10 +27,7 @@ Any issues with the Toggl API should be reported to the [lib-toggl](https://gith
 
 ## TODOs
 
-- [ ] Get the Toggl Track logo added to brands repo. Pending [PR #5023](https://github.com/home-assistant/brands/pull/5023)
-- [ ] Rework `lib-toggle` to use pydantic v1. See [lib-toggl issue #3](https://github.com/kquinsland/lib-toggl/issues/3)
-- [ ] Get this repo in release shape and start testing with HACS.
-  - [ ] Pending [issue #3](https://github.com/kquinsland/lib-toggl/issues/3); for now, it's possible to do a manual install via `pip` but could break your Home Assistant instance if you're not careful
+- [ ] Proper version/release automation for HACS. As of now, it's just a git short hash with no real release notes ... etc.
 - [ ] Fix issues with translations/strings; not sure why they're not working properly in config flow
 - [ ] Other missing bits and pieces that are still needed to turn this into an official integration
 - [ ] Tests. Lots and lots of tests to cover all sorts of things
