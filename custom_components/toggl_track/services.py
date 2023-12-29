@@ -14,6 +14,7 @@ from .const import (
     ATTR_CREATED_WITH,
     ATTR_DESCRIPTION,
     ATTR_ID,
+    ATTR_PROJECT_ID,
     ATTR_TAGS,
     ATTR_WORKSPACE_ID,
     DOMAIN,
@@ -40,6 +41,7 @@ NEW_TIME_ENTRY_SERVICE_SCHEMA = Schema(
         Optional(ATTR_CREATED_WITH, description="test-description"): All(
             cv.string, Length(min=1, max=128)
         ),
+        Optional(ATTR_PROJECT_ID): cv.positive_int,
         Optional(ATTR_TAGS): All(cv.ensure_list, [_TAG_SCHEMA]),
         Optional(ATTR_BILLABLE): bool,
         # TODO: add support for start/stop dates. This will allow creating a time entry for a past date
