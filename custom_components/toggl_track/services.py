@@ -14,6 +14,7 @@ from .const import (
     ATTR_CREATED_WITH,
     ATTR_DESCRIPTION,
     ATTR_ID,
+    ATTR_PROJECT_ID,
     ATTR_TAGS,
     ATTR_WORKSPACE_ID,
     DOMAIN,
@@ -40,6 +41,7 @@ NEW_TIME_ENTRY_SERVICE_SCHEMA = Schema(
         Optional(ATTR_CREATED_WITH, description="test-description"): All(
             cv.string, Length(min=1, max=128)
         ),
+        Optional(ATTR_PROJECT_ID): cv.positive_int,
         Optional(ATTR_TAGS): All(cv.ensure_list, [_TAG_SCHEMA]),
         Optional(ATTR_BILLABLE): bool,
         # TODO: add support for start/stop dates. This will allow creating a time entry for a past date
@@ -141,7 +143,8 @@ def async_register_services(
         # At least as far as I can tell, toggl will not return anything for the create call?
         # If that's true, may want to change how service is registered
         if call.return_response:
-            return created_time_entry.model_dump()
+            # Pydantic 1.x uses .dict() instead of model_dump()
+            return created_time_entry.dict()
         # set support_response to optional, but still get error when returning none
         # so return empty dict for now
         return None
@@ -183,7 +186,8 @@ def async_register_services(
         _LOGGER.debug("Result of stop_time_entry: %s", stopped_te)
 
         if call.return_response:
-            return stopped_te.model_dump()
+            # Pydantic 1.x uses .dict() instead of model_dump()
+            return stopped_te.dict()
         return {}
 
     # Bail if the service has already been registered
