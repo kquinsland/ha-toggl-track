@@ -41,6 +41,6 @@ jobs:
         #   disable-autolabeler: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # with:
-        #   # See: https://github.com/release-drafter/release-drafter/issues/1125
-        #   commitish: master
+        with:
+          # See: https://github.com/release-drafter/release-drafter/issues/1125
+          commitish: master
