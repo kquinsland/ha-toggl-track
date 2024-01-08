@@ -78,7 +78,8 @@ async def async_setup_entry(
                 coordinator,
                 config_entry.entry_id,
                 _acct.id,
-                workspace_id,
+                # Unclear why, but even when storing as an int, read back gives me a string.
+                int(workspace_id),
                 workspace_name,
             )
             for workspace_id, workspace_name in _workspaces.items()
@@ -133,20 +134,33 @@ class TogglTrackWorkspaceSensorEntity(
         # Check and use it's values for state/attrs so we don't have to wait for the next update in ~ 60s
         self._update_state()
 
+    def _do_empty_state(self) -> None:
+        """Set the state to None and clear all attributes."""
+        self._state = None
+        # Clear all attributes that are not 'static'
+        for k in list(set(TE_SPECIFIC_ATTR_KEYS) - set(ACCT_ATTR_KEYS)):
+            if k in self._attrs:
+                del self._attrs[k]
+
     def _update_state(self) -> None:
-        """Update the state of the sensor."""
+        """Update the state of the sensor if the workspace ID belongs to us."""
+
         # If there is no time entry running, remove all the attributes that are specific to the time entry
         if self.coordinator.data is None:
             _LOGGER.debug(
                 "No current time entry running; state to become None and attrs to be cleared"
             )
-            self._state = None
-
-            # Clear all attributes that are not 'static'
-            for k in list(set(TE_SPECIFIC_ATTR_KEYS) - set(ACCT_ATTR_KEYS)):
-                if k in self._attrs:
-                    del self._attrs[k]
-
+            self._do_empty_state()
+            return
+        # If not none, then there is some time entry running... is it in our workspace?
+        elif self.coordinator.data.workspace_id != self._workspace_id:
+            _LOGGER.debug(
+                "Current time entry is for workspace '%s' which is not our workspace '%s'; state to become None and attrs to be cleared",
+                self.coordinator.data.workspace_id,
+                self._workspace_id,
+            )
+            self._do_empty_state()
+            return
         else:
             # If there is a time entry running, set all the attributes that are specific to the time entry
             # We don't bother with tag and tag IDs individually; zip them up into a dict
