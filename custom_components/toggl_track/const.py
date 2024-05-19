@@ -1,7 +1,8 @@
 """Constans and other special strings."""
+
 DOMAIN = "toggl_track"
 
-INTEGRATION_VERSION = "0.0.1"
+INTEGRATION_VERSION = "0.1.0"
 ISSUE_URL = "https://github.com/kquinsland/ha-toggl/issues"
 
 
@@ -23,7 +24,10 @@ TOGGL_TRACK_PROFILE_URL = "https://track.toggl.com/profile"
 # Time Entries have quite a few attributes, not all of which are useful for HA
 # See: https://developers.track.toggl.com/docs/api/time_entries#200-1
 ##
+# Toggl API is inconsistent; depending on which endpoint, time entry ID is either just "id" or "time_entry_id"
 ATTR_ID = "id"
+ATTR_TIME_ENTRY_ID = "time_entry_id"
+
 ATTR_DESCRIPTION = "description"
 ATTR_WORKSPACE_ID = "workspace_id"
 ATTR_WORKSPACE_NAME = "name"
@@ -43,4 +47,5 @@ ATTR_CREATED_WITH = "created_with"
 
 SERVICE_NEW_TIME_ENTRY = "new_time_entry"
 SERVICE_STOP_TIME_ENTRY = "stop_time_entry"
+SERVICE_EDIT_TIME_ENTRY = "edit_time_entry"
 SERVICE_WORKSPACE_ID_ENTITY_ID = "workspace_id_entity_id"

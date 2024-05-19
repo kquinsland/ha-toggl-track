@@ -4,6 +4,7 @@
 new_time_entry:
   fields:
     description:
+      name: Description
       required: true
       advanced: false
       example: "Cleaning the house"
@@ -17,6 +18,7 @@ new_time_entry:
     #   a toggl_track sensor entity that will provide the workspace ID
     ##
     workspace_id:
+      name: Workspace ID
       required: false
       advanced: true
       example: "1234567"
@@ -24,6 +26,7 @@ new_time_entry:
         text:
 
     workspace_id_entity_id:
+      name: Workspace Entity ID
       required: false
       advanced: true
       # Example value that can be passed for this field
@@ -36,6 +39,7 @@ new_time_entry:
               domain: sensor
 
     project_id:
+      name: Project ID
       required: false
       advanced: true
       example: "1234567"
@@ -44,6 +48,7 @@ new_time_entry:
 
     # List of strings that can be added to the time track entry
     tags:
+      name: Tags
       required: false
       advanced: true
       # Example value that can be passed for this field
@@ -61,6 +66,7 @@ new_time_entry:
     # Toggl Doesn't really surface this in the UI consistently but it's possible to explicitly set what created
     #   the particular entry. This value is seperate from the tags and is not required.
     created_with:
+      name: Created With
       required: false
       advanced: true
       example: "some-automation-name"
@@ -71,6 +77,7 @@ new_time_entry:
 
     # Boolean value that will set the time entry to billable or not. This changes how time entries show up in reports.
     billable:
+      name: Billable
       required: false
       advanced: true
       default: False
@@ -83,6 +90,7 @@ new_time_entry:
 stop_time_entry:
   fields:
     workspace_id_entity_id:
+      name: Workspace Entity ID
       required: false
       advanced: true
       # Example value that can be passed for this field
@@ -96,16 +104,79 @@ stop_time_entry:
 
     # Alternate way to set the workspace ID if you don't want to use the entity selector
     workspace_id:
+      name: Workspace ID
       required: false
       advanced: true
       example: "1234567"
       selector:
         text:
 
-    # Alternate way to set the time entry ID if you don't want to use the entity selector
-    id:
+    time_entry_id:
+      name: Time Entry ID
       required: false
       advanced: false
+      example: "1234567"
+      selector:
+        text:
+
+# Toggle Docs seems to imply that edit API endpoint more or less takes the same inputs as create and then some.
+# For initial roll out, only going to allow editing the description and tags.
+# Can add support for moving project / editing start/stop/billable later if needed.
+edit_time_entry:
+  fields:
+    description:
+      name: Description
+      required: false
+      advanced: true
+      example: "Cleaning the house"
+      default: "Home Assistant Toggl Track Time Entry"
+      selector:
+        text:
+
+    # Underlying API requires a list of tags + an add/delete action.
+    # Goal here is to expose an easier to use API for the user where the complete set of tags the user sets
+    #   is what gets set.
+    tags:
+      name: Tags
+      required: false
+      advanced: true
+      example:
+        - "tag1"
+        - "tag2"
+        - "tag3"
+      default:
+        - "HomeAssistant"
+      selector:
+        text:
+          # Each line is an entry in the list
+          multiple: true
+
+    # API requires a workspace ID and time entry ID for edits.
+    # Make the sensor selector the default tool so user only needs to select one thing and we can
+    # pull current time entry and workspace from it.
+    workspace_id_entity_id:
+      name: Workspace Entity ID
+      required: false
+      advanced: false
+      example: "sensor.your_toggl_track_workspace_name"
+      selector:
+        entity:
+          multiple: false
+          filter:
+            - integration: toggl_track
+              domain: sensor
+    workspace_id:
+      name: Workspace ID
+      required: false
+      advanced: true
+      example: "1234567"
+      selector:
+        text:
+
+    time_entry_id:
+      name: Time Entry ID
+      required: false
+      advanced: true
       example: "1234567"
       selector:
         text:

@@ -1,4 +1,5 @@
 """Handle Hue Service calls."""
+
 from __future__ import annotations
 
 import logging
@@ -16,8 +17,10 @@ from .const import (
     ATTR_ID,
     ATTR_PROJECT_ID,
     ATTR_TAGS,
+    ATTR_TIME_ENTRY_ID,
     ATTR_WORKSPACE_ID,
     DOMAIN,
+    SERVICE_EDIT_TIME_ENTRY,
     SERVICE_NEW_TIME_ENTRY,
     SERVICE_STOP_TIME_ENTRY,
     SERVICE_WORKSPACE_ID_ENTITY_ID,
@@ -58,12 +61,29 @@ ENTITY_ID_SCHEMA = Schema({Required(SERVICE_WORKSPACE_ID_ENTITY_ID): str})
 WORKSPACE_AND_TIME_ENTRY_ID_SCHEMA = Schema(
     {
         Required(ATTR_WORKSPACE_ID): cv.positive_int,
-        Required(ATTR_ID): cv.positive_int,
+        Required(ATTR_TIME_ENTRY_ID): cv.positive_int,
     }
 )
 
 STOP_TIME_ENTRY_SERVICE_SCHEMA = Any(
     ENTITY_ID_SCHEMA, WORKSPACE_AND_TIME_ENTRY_ID_SCHEMA
+)
+
+# The underlying API almost doesn't differentiate between creating and editing a time entry
+# Exposing a much simpler set of functionality to the user via HA: change name / tags
+EDIT_TIME_ENTRY_SERVICE_SCHEMA = Schema(
+    {
+        Optional(ATTR_DESCRIPTION, description="Name of the Time Entry"): All(
+            cv.string, Length(min=1, max=255)
+        ),
+        Optional(ATTR_TAGS): All(cv.ensure_list, [_TAG_SCHEMA]),
+        # One or the other must be provided but not both.
+        Exclusive(ATTR_WORKSPACE_ID, "workspace_id_or_entity_id"): cv.positive_int,
+        Exclusive(SERVICE_WORKSPACE_ID_ENTITY_ID, "workspace_id_or_entity_id"): str,
+        # We need the time entry ID, obviously. If user does not explicitly provide it, we'll try to get it from the entity ID
+        Exclusive(ATTR_TIME_ENTRY_ID, "time_entry_id_or_entity_id"): cv.positive_int,
+        Exclusive(SERVICE_WORKSPACE_ID_ENTITY_ID, "time_entry_id_or_entity_id"): str,
+    }
 )
 
 
@@ -166,16 +186,15 @@ def async_register_services(
             workspace_id = call.data[ATTR_WORKSPACE_ID]
         _call_data[ATTR_WORKSPACE_ID] = workspace_id
 
-        if ATTR_ID not in call.data:
-            time_entry_id = _get_attr_from_entity_id(ATTR_ID, call, hass)
+        if ATTR_TIME_ENTRY_ID not in call.data:
+            time_entry_id = _get_attr_from_entity_id(ATTR_TIME_ENTRY_ID, call, hass)
             if time_entry_id is None:
                 _err = f"Provided entity ID {call.data[SERVICE_WORKSPACE_ID_ENTITY_ID]} does not have a current time entry"
                 _LOGGER.error(_err)
                 return {"error": _err}
-
         else:
-            time_entry_id = call.data[ATTR_ID]
-        _call_data[ATTR_ID] = time_entry_id
+            time_entry_id = call.data[ATTR_TIME_ENTRY_ID]
+        _call_data[ATTR_TIME_ENTRY_ID] = time_entry_id
 
         if SERVICE_WORKSPACE_ID_ENTITY_ID in _call_data:
             # Unset SERVICE_WORKSPACE_ID_ENTITY_ID in the copy before passing it to the lib_toggl code
@@ -188,6 +207,55 @@ def async_register_services(
         if call.return_response:
             # Pydantic 1.x uses .dict() instead of model_dump()
             return stopped_te.dict()
+        return {}
+
+    async def handle_edit_new_time_entry(call: ServiceCall) -> dict:
+        _LOGGER.debug("handle_edit_new_time_entry() called")
+
+        # call data should look like this:
+        # {'workspace_id_entity_id': 'sensor.toggl_com_s_workspace', 'tags': ['SomeNew', 'SetOfTags', 'ToAddToTheEntry'], 'description': 'MyNewTitleHere'}
+        # Or
+        # {'tags': ['SomeNew', 'SetOfTags', 'ToAddToTheEntry'], 'description': 'MyNewTitleHere', 'workspace_id': 12345678, 'time_entry_id': 87654321}
+
+        _call_data = call.data.copy()
+
+        # TODO: a lot of this validation is shared with stop(); can probably refactor out.
+        if ATTR_WORKSPACE_ID not in call.data:
+            workspace_id = _get_attr_from_entity_id(ATTR_WORKSPACE_ID, call, hass)
+            if workspace_id is None:
+                _err = f"Provided entity ID {call.data[SERVICE_WORKSPACE_ID_ENTITY_ID]} does not have a workspace ID"
+                _LOGGER.error(_err)
+                return {"error": _err}
+        else:
+            workspace_id = call.data[ATTR_WORKSPACE_ID]
+        _call_data[ATTR_WORKSPACE_ID] = workspace_id
+
+        if ATTR_TIME_ENTRY_ID not in call.data:
+            # Remember, toggle API is inconsistent. TimeEntry has an `id` for creation and polling current active
+            # But when updating, it's `time_entry_id` on the API.
+            # Since the HA entity is populated from the poll/current API call, we have to use `id` here
+            time_entry_id = _get_attr_from_entity_id(ATTR_ID, call, hass)
+            if time_entry_id is None:
+                _err = f"Provided entity ID {call.data[SERVICE_WORKSPACE_ID_ENTITY_ID]} does not have a current time entry"
+                _LOGGER.error(_err)
+                return {"error": _err}
+
+        else:
+            time_entry_id = call.data[ATTR_TIME_ENTRY_ID]
+        # See note above; TODO, see if pydantic supports aliases?
+        _call_data[ATTR_ID] = time_entry_id
+
+        if SERVICE_WORKSPACE_ID_ENTITY_ID in _call_data:
+            # Unset SERVICE_WORKSPACE_ID_ENTITY_ID in the copy before passing it to the lib_toggl code
+            del _call_data[SERVICE_WORKSPACE_ID_ENTITY_ID]
+
+        edited_te = TimeEntry(**_call_data)
+        edited_te = await coordinator.api.edit_time_entry(edited_te)
+        _LOGGER.debug("Result of edit_time_entry: %s", edited_te)
+
+        if call.return_response:
+            # Pydantic 1.x uses .dict() instead of model_dump()
+            return edited_te.dict()
         return {}
 
     # Bail if the service has already been registered
@@ -214,5 +282,18 @@ def async_register_services(
             SERVICE_STOP_TIME_ENTRY,
             handle_stop_new_time_entry,
             schema=STOP_TIME_ENTRY_SERVICE_SCHEMA,
+            supports_response=SupportsResponse.OPTIONAL,
+        )
+
+    if not hass.services.has_service(DOMAIN, SERVICE_EDIT_TIME_ENTRY):
+        _LOGGER.debug(
+            "Service '%s' not registered, doing so now", SERVICE_EDIT_TIME_ENTRY
+        )
+
+        hass.services.async_register(
+            DOMAIN,
+            SERVICE_EDIT_TIME_ENTRY,
+            handle_edit_new_time_entry,
+            schema=EDIT_TIME_ENTRY_SERVICE_SCHEMA,
             supports_response=SupportsResponse.OPTIONAL,
         )
