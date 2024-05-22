@@ -172,7 +172,6 @@ class TogglTrackWorkspaceSensorEntity(
 
         # Everything copied in, zip up then clean up
         self._attrs[ATTR_TAGS] = dict(
-            # For some reason, tag_ids = [], tags=None and that's causing issues...
             # Strict=True as the strings and ints should always be in sync / same length :).
             zip(self._attrs[ATTR_TAG_IDS], self._attrs[ATTR_TAGS], strict=True)
         )

@@ -52,8 +52,8 @@
                     "description": "Numeric ID of the Workspace to create the Time Entry in."
                 },
                 "workspace_id_entity_id": {
-                    "name": "Entity with workspace ID attribute",
-                    "description": "TODO."
+                    "name": "Workspace Entity",
+                    "description": "Entity with `workspace_id` attribute."
                 },
                 "tags": {
                     "name": "Tags",
@@ -77,9 +77,13 @@
                     "name": "Worksapce ID",
                     "description": "Numeric ID of the Workspace to create the Time Entry in."
                 },
+                "time_entry_id": {
+                    "name": "Time Entry ID",
+                    "description": "Numeric ID of the specific Time Entry to edit."
+                },
                 "workspace_id_entity_id": {
-                    "name": "Entity with workspace ID attribute",
-                    "description": "TODO."
+                    "name": "Workspace Entity",
+                    "description": "Entity with `workspace_id` attribute."
                 }
             }
         },
