@@ -60,6 +60,10 @@ In dev container, the `logger` component of `config.yaml` can be set up to log t
 logger:
   default: info
   logs:
+    # API client internals
+    lib_toggl.client: debug
+    # HA specific things
     custom_components.toggl_track: debug
     custom_components.toggl_track.services: debug
+
 ```

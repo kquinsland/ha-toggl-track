@@ -210,20 +210,15 @@ def async_register_services(
         return {}
 
     async def handle_edit_new_time_entry(call: ServiceCall) -> dict:
-        _LOGGER.debug("handle_edit_new_time_entry() called")
-
-        # call data should look like this:
-        # {'workspace_id_entity_id': 'sensor.toggl_com_s_workspace', 'tags': ['SomeNew', 'SetOfTags', 'ToAddToTheEntry'], 'description': 'MyNewTitleHere'}
-        # Or
-        # {'tags': ['SomeNew', 'SetOfTags', 'ToAddToTheEntry'], 'description': 'MyNewTitleHere', 'workspace_id': 12345678, 'time_entry_id': 87654321}
-
+        _LOGGER.debug("handle_edit_new_time_entry() called with: %s", call.data)
+        # Immutable so copy.
         _call_data = call.data.copy()
 
         # TODO: a lot of this validation is shared with stop(); can probably refactor out.
         if ATTR_WORKSPACE_ID not in call.data:
             workspace_id = _get_attr_from_entity_id(ATTR_WORKSPACE_ID, call, hass)
             if workspace_id is None:
-                _err = f"Provided entity ID {call.data[SERVICE_WORKSPACE_ID_ENTITY_ID]} does not have a workspace ID"
+                _err = f"Provided entity ID {call.data[SERVICE_WORKSPACE_ID_ENTITY_ID]} does not have {ATTR_WORKSPACE_ID}."
                 _LOGGER.error(_err)
                 return {"error": _err}
         else:
@@ -236,7 +231,7 @@ def async_register_services(
             # Since the HA entity is populated from the poll/current API call, we have to use `id` here
             time_entry_id = _get_attr_from_entity_id(ATTR_ID, call, hass)
             if time_entry_id is None:
-                _err = f"Provided entity ID {call.data[SERVICE_WORKSPACE_ID_ENTITY_ID]} does not have a current time entry"
+                _err = f"Provided entity ID {call.data[SERVICE_WORKSPACE_ID_ENTITY_ID]} does not have {ATTR_TIME_ENTRY_ID}."
                 _LOGGER.error(_err)
                 return {"error": _err}
 
@@ -246,13 +241,19 @@ def async_register_services(
         _call_data[ATTR_ID] = time_entry_id
 
         if SERVICE_WORKSPACE_ID_ENTITY_ID in _call_data:
-            # Unset SERVICE_WORKSPACE_ID_ENTITY_ID in the copy before passing it to the lib_toggl code
+            # Unset SERVICE_WORKSPACE_ID_ENTITY_ID in the copy before passing it to the lib_toggl code as
+            #   the lib_toggl internals have no idea what to do with it
             del _call_data[SERVICE_WORKSPACE_ID_ENTITY_ID]
 
         edited_te = TimeEntry(**_call_data)
         edited_te = await coordinator.api.edit_time_entry(edited_te)
         _LOGGER.debug("Result of edit_time_entry: %s", edited_te)
+        if edited_te is None:
+            _LOGGER.error("Failed to edit Time Entry")
+            return {"error": "Failed to edit Time Entry"}
 
+        # Server resturns the updated Time Entry so we can update the entity state directly / immediately
+        coordinator.async_set_updated_data(edited_te)
         if call.return_response:
             # Pydantic 1.x uses .dict() instead of model_dump()
             return edited_te.dict()

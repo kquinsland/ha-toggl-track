@@ -154,7 +154,7 @@ class TogglTrackWorkspaceSensorEntity(
             self._do_empty_state()
             return
         # If not none, then there is some time entry running... is it in our workspace?
-        elif self.coordinator.data.workspace_id != self._workspace_id:
+        if self.coordinator.data.workspace_id != self._workspace_id:
             _LOGGER.debug(
                 "Current time entry is for workspace '%s' which is not our workspace '%s'; state to become None and attrs to be cleared",
                 self.coordinator.data.workspace_id,
@@ -162,19 +162,22 @@ class TogglTrackWorkspaceSensorEntity(
             )
             self._do_empty_state()
             return
-        else:
-            # If there is a time entry running, set all the attributes that are specific to the time entry
-            # We don't bother with tag and tag IDs individually; zip them up into a dict
-            self._state = self.coordinator.data.description
 
-            for k in TE_SPECIFIC_ATTR_KEYS:
-                self._attrs[k] = getattr(self.coordinator.data, k)
+        # If there is a time entry running, set all the attributes that are specific to the time entry
+        # We don't bother with tag and tag IDs individually; zip them up into a dict
+        self._state = self.coordinator.data.description
 
-            # Everything copied in, zip up then clean up
-            self._attrs[ATTR_TAGS] = dict(
-                zip(self._attrs[ATTR_TAG_IDS], self._attrs[ATTR_TAGS])
-            )
-            self._attrs.pop(ATTR_TAG_IDS)
+        for k in TE_SPECIFIC_ATTR_KEYS:
+            self._attrs[k] = getattr(self.coordinator.data, k)
+
+        # Everything copied in, zip up then clean up
+        self._attrs[ATTR_TAGS] = dict(
+            # For some reason, tag_ids = [], tags=None and that's causing issues...
+            # Strict=True as the strings and ints should always be in sync / same length :).
+            zip(self._attrs[ATTR_TAG_IDS], self._attrs[ATTR_TAGS], strict=True)
+        )
+        # We just zipped together; don't need this anymore
+        self._attrs.pop(ATTR_TAG_IDS)
         # This is a bit of a hack, but it works
         # For reasons that are going to suck to track down, the workspace ID is
         #   showing up as an integer when first set but as soon as we get a None for
