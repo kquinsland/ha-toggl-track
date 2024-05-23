@@ -98,7 +98,7 @@ def _new_te_xor_validator(incoming_data):
 
 
 # Stop service takes nothing but a workspace ID and time entry ID
-STOP_EDIT_TIME_ENTRY_SERVICE_COMMON_SCHEMA = Schema(
+STOP_TIME_ENTRY_SERVICE_SCHEMA = Schema(
     All(
         # Do a basic check to make sure that if it's provided, it's at least the right type
         {
@@ -117,12 +117,20 @@ STOP_EDIT_TIME_ENTRY_SERVICE_COMMON_SCHEMA = Schema(
 ##
 # Like Stop, Edit requires either explicit workspace/time entry IDs or an entity ID in addition to the description and tags
 EDIT_TIME_ENTRY_SERVICE_SCHEMA = Schema(
-    {
-        Optional(ATTR_DESCRIPTION, description="Name of the Time Entry"): All(
-            cv.string, Length(min=1, max=255)
-        ),
-        Optional(ATTR_TAGS): All(cv.ensure_list, [_TAG_SCHEMA]),
-    }
+    All(
+        # Do a basic check to make sure that if it's provided, it's at least the right type
+        {
+            Optional(ATTR_DESCRIPTION, description="Name of the Time Entry"): All(
+                cv.string, Length(min=1, max=255)
+            ),
+            Optional(ATTR_TAGS): All(cv.ensure_list, [_TAG_SCHEMA]),
+            ATTR_TIME_ENTRY_ID: cv.positive_int,
+            ATTR_WORKSPACE_ID: cv.positive_int,
+            SERVICE_WORKSPACE_ID_ENTITY_ID: str,
+        },
+        # Then do the XOR check
+        _xor_validator,
+    )
 )
 
 
@@ -328,7 +336,7 @@ def async_register_services(
             DOMAIN,
             SERVICE_STOP_TIME_ENTRY,
             handle_stop_new_time_entry,
-            schema=STOP_EDIT_TIME_ENTRY_SERVICE_COMMON_SCHEMA,
+            schema=STOP_TIME_ENTRY_SERVICE_SCHEMA,
             supports_response=SupportsResponse.OPTIONAL,
         )
 
@@ -341,9 +349,6 @@ def async_register_services(
             DOMAIN,
             SERVICE_EDIT_TIME_ENTRY,
             handle_edit_new_time_entry,
-            schema=All(
-                STOP_EDIT_TIME_ENTRY_SERVICE_COMMON_SCHEMA,
-                EDIT_TIME_ENTRY_SERVICE_SCHEMA,
-            ),
+            schema=EDIT_TIME_ENTRY_SERVICE_SCHEMA,
             supports_response=SupportsResponse.OPTIONAL,
         )
