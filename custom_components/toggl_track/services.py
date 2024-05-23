@@ -173,6 +173,7 @@ def _handle_workspace_id(hass: HomeAssistant, call_data: dict[str, Any]):
         if attr_value := _get_attr_from_entity_id(ATTR_WORKSPACE_ID, call_data, hass):
             call_data[ATTR_WORKSPACE_ID] = attr_value
         else:
+            # pylint: disable=line-too-long
             _err = f"Provided entity ID {call_data[SERVICE_WORKSPACE_ID_ENTITY_ID]} does not have a workspace ID"
             _LOGGER.error(_err)
             raise ServiceValidationError(
@@ -196,6 +197,7 @@ def _handle_time_entry_id(hass: HomeAssistant, call_data: dict[str, Any]):
         if attr_value := _get_attr_from_entity_id(ATTR_ID, call_data, hass):
             call_data[ATTR_ID] = attr_value
         else:
+            # pylint: disable=line-too-long
             _err = f"Provided entity ID {call_data[SERVICE_WORKSPACE_ID_ENTITY_ID]} does not have a time entry ID"
             _LOGGER.error(_err)
             raise ServiceValidationError(
@@ -225,7 +227,8 @@ def async_register_services(
         """Handle creating a new Time Entry."""
 
         _LOGGER.debug("handle_start_new_time_entry() called")
-        # Call.data is immutable so we need to make a copy before we clear SERVICE_WORKSPACE_ID_ENTITY_ID and set the workspace ID
+        # Call.data is immutable; copy before we clear SERVICE_WORKSPACE_ID_ENTITY_ID
+        #   and set the workspace ID
         call_data = call.data.copy()
 
         _handle_workspace_id(hass, call_data)

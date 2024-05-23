@@ -1,5 +1,5 @@
-# Toggl can take a lot of different paramms when creating a service but only a few are REQUIRED.
-# Note that the values here need to match up with the voluputous schema in the service.py file
+# Toggl can take a lot of different params when creating a service but only a few are REQUIRED.
+# Note that the values here need to match up with the voluptuous schema in the service.py file
 ##
 new_time_entry:
   fields:
@@ -64,7 +64,7 @@ new_time_entry:
           multiple: true
 
     # Toggl Doesn't really surface this in the UI consistently but it's possible to explicitly set what created
-    #   the particular entry. This value is seperate from the tags and is not required.
+    #   the particular entry. This value is separate from the tags and is not required.
     created_with:
       name: Created With
       required: false
@@ -85,7 +85,7 @@ new_time_entry:
         boolean:
 
 # Despite the "there can only be one time entry active per account", the API still requires
-#  a time entry ID AND workspaace ID to be passed when stopping a time entry.
+#  a time entry ID AND workspace ID to be passed when stopping a time entry.
 ##
 stop_time_entry:
   fields:

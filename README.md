@@ -164,3 +164,23 @@ And using another Toggl Track client, you'll see the new time entry
 #### `toggl_track.stop_time_entry`
 
 Docs for this service are coming soon; operates similar to the create time entry service, though.
+
+#### `toggl_track.edit_time_entry`
+
+Similar to [`new_time_entry`](README#`toggl_track.new_time_entry`) but meant for editing an existing time entry.
+
+Internally, the Toggle API allows editing virtually every aspect of a time entry but I've chosen to only expose the `description` and `tags` fields for now as my use case doesn't require anything else.
+
+This service will create tags if they do not yet exist in the workspace so you're free to add new tags as needed and not worry about creating them first.
+
+This service will remove tags if needed but it will not delete them.
+
+```yaml
+service: toggl_track.edit_time_entry
+data:
+  description: Cleaning the house
+  tags: tag1,tag2,tag3
+  workspace_id_entity_id: sensor.your_toggl_track_workspace_name
+  workspace_id: 1234567
+  time_entry_id: 1234567
+```

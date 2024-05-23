@@ -1,4 +1,5 @@
 """DataUpdateCoordinator for the Toggl Track API/component."""
+
 import asyncio.timeouts as async_timeout
 from datetime import timedelta
 import logging
