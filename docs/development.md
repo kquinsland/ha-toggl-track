@@ -27,8 +27,11 @@ Basically mount the custom_components folder into the home assistant dev contain
 
 Then just install updated `lib-toggl` directly into the dev container via the terminal:
 
+> [!IMPORTANT]
+> When manually / locally installing the `lib-toggl` library, honor the `package_constraints.txt` file in the `homeassistant` folder to mimic a production install!
+
 ```shell
-vscode ➜ /workspaces/ha-core (add-toggl-track) $ pip install /workspaces/ha-core/config/custom_libraries/lib-toggl
+vscode ➜ / $ pip install /workspaces/core/config/custom_libraries/lib-toggl --upgrade --constraint /workspaces/core/homeassistant/package_constraints.txt
 ```
 
 You can then edit the `lib-toggl` library from the same context as the rest of the Home Assistant code base.
