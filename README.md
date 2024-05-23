@@ -12,16 +12,16 @@ Any issues with the Toggl API should be reported to the [lib-toggl](https://gith
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Toggl Track for Home Assistant](#toggl-track-for-home-assistant)
-  - [TODOs](#todos)
-  - [Installation](#installation)
-    - [HACS](#hacs)
-    - [Manual](#manual)
-  - [Using](#using)
-    - [Sensors](#sensors)
-    - [Services](#services)
-      - [`toggl_track.new_time_entry`](#toggl_tracknew_time_entry)
-      - [`toggl_track.stop_time_entry`](#toggl_trackstop_time_entry)
+- [TODOs](#todos)
+- [Installation](#installation)
+  - [HACS](#hacs)
+  - [Manual](#manual)
+- [Using](#using)
+  - [Sensors](#sensors)
+  - [Services](#services)
+    - [`toggl_track.new_time_entry`](#toggl_tracknew_time_entry)
+    - [`toggl_track.stop_time_entry`](#toggl_trackstop_time_entry)
+    - [`toggl_track.edit_time_entry`](#toggl_trackedit_time_entry)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
