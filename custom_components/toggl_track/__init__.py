@@ -1,4 +1,5 @@
 """Example of a custom component exposing a service."""
+
 from __future__ import annotations
 
 from datetime import timedelta
@@ -51,7 +52,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await coordinator.async_config_entry_first_refresh()
     await coordinator.async_get_workspaces()
 
-    # Assuming nothing went wrong, store instance of cordinator
+    # Assuming nothing went wrong, store instance of coordinator
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = coordinator
 

@@ -1,4 +1,5 @@
 """implements graphical configuration flow for setting up Toggl Track integration."""
+
 from http import HTTPStatus
 import logging
 from typing import Any, Optional
@@ -63,7 +64,7 @@ class TogglTrackConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._workspaces: dict[str, int] = None
 
     async def async_step_user(
-        self, user_input: Optional[dict[str, Any]] = None
+        self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Handle the initial step if it's not already been done before.
 
@@ -94,6 +95,7 @@ class TogglTrackConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 await self.async_set_unique_id(self._acct_details.id)
 
         # See:  https://developers.home-assistant.io/docs/integration_setup_failures
+        # TODO: raise: ConfigValidationError?
         except ClientResponseError as http_err:
             _LOGGER.error("Error creating entry", extra={"http_err": http_err})
             if http_err.status == HTTPStatus.UNAUTHORIZED:
@@ -129,7 +131,7 @@ class TogglTrackConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return await self.async_step_workspaces()
 
     async def async_step_workspaces(
-        self, user_input: Optional[dict[str, Any]] = None
+        self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Do option flow for selecting workspaces to track."""
 

@@ -51,3 +51,19 @@ Assuming you've [installed the `pre-commit` tool](https://pre-commit.com/#instal
 ❯ pre-commit install
 pre-commit installed at .git/hooks/pre-commit
 ```
+
+## HA Logging
+
+In dev container, the `logger` component of `config.yaml` can be set up to log the custom component at a debug level:
+
+```yaml
+logger:
+  default: info
+  logs:
+    # API client internals
+    lib_toggl.client: debug
+    # HA specific things
+    custom_components.toggl_track: debug
+    custom_components.toggl_track.services: debug
+
+```
