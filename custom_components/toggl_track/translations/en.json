@@ -113,5 +113,16 @@
                 }
             }
         }
+    },
+    "exceptions": {
+        "te_ws_ids_xor_entity_id": {
+            "message": "Either Workspace Sensor Entity OR both Workspace ID AND Time Entry ID must be provided."
+        },
+        "cant_fetch_ws_id_from_entity_id": {
+            "message": "Workspace ID could not be fetched from the provided Sensor Entity ({entity_id})."
+        },
+        "cant_fetch_te_id_from_entity_id": {
+            "message": "Time Entry ID could not be fetched from the provided Sensor Entity ({entity_id})."
+        }
     }
 }
