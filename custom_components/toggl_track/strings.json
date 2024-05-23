@@ -48,7 +48,7 @@
                     "description": "Time Entry title."
                 },
                 "workspace_id": {
-                    "name": "Worksapce ID",
+                    "name": "Workspace ID",
                     "description": "Numeric ID of the Workspace to create the Time Entry in."
                 },
                 "workspace_id_entity_id": {
@@ -74,7 +74,7 @@
             "description": "Stops currently running Time Entry.",
             "fields": {
                 "workspace_id": {
-                    "name": "Worksapce ID",
+                    "name": "Workspace ID",
                     "description": "Numeric ID of the Workspace to create the Time Entry in."
                 },
                 "time_entry_id": {
@@ -96,7 +96,7 @@
                     "description": "Time Entry title."
                 },
                 "workspace_id": {
-                    "name": "Worksapce ID",
+                    "name": "Workspace ID",
                     "description": "Numeric ID of the Workspace the Time Entry belongs to."
                 },
                 "time_entry_id": {
