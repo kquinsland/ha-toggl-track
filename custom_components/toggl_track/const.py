@@ -1,8 +1,9 @@
-"""Constans and other special strings."""
+"""Constants and other special strings."""
 
 DOMAIN = "toggl_track"
 
-INTEGRATION_VERSION = "0.1.0"
+# TODO: set up CI/CD and bump version to match manifest.json
+INTEGRATION_VERSION = "0.1.2"
 ISSUE_URL = "https://github.com/kquinsland/ha-toggl/issues"
 
 
