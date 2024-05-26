@@ -3,7 +3,7 @@
 DOMAIN = "toggl_track"
 
 # TODO: set up CI/CD and bump version to match manifest.json
-INTEGRATION_VERSION = "0.1.2"
+INTEGRATION_VERSION = "0.1.3"
 ISSUE_URL = "https://github.com/kquinsland/ha-toggl/issues"
 
 
