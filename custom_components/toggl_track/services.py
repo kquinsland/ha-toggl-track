@@ -247,6 +247,8 @@ def async_register_services(
             created_time_entry = await coordinator.api.create_new_time_entry(
                 new_time_entry
             )
+            # Update entity immediately so we don't have to wait for the next poll
+            coordinator.async_set_updated_data(created_time_entry)
 
         except ClientResponseError as err:
             # TODO: in lib-toggl catch he various 4XX family and raise a more specific error
@@ -298,6 +300,8 @@ def async_register_services(
         edited_te = TimeEntry(**call_data)
         try:
             edited_te = await coordinator.api.edit_time_entry(edited_te)
+            # Server returns the updated Time Entry so we can update the entity state directly / immediately
+            coordinator.async_set_updated_data(edited_te)
         except ClientResponseError as err:
             # TODO: in lib-toggl catch he various 4XX family and raise a more specific error
             raise HomeAssistantError(f"Error editing Time Entry: {err}") from err
@@ -306,8 +310,6 @@ def async_register_services(
                 _LOGGER.error("Failed to edit Time Entry")
                 raise HomeAssistantError("Failed to edit Time Entry")
 
-            # Server returns the updated Time Entry so we can update the entity state directly / immediately
-            coordinator.async_set_updated_data(edited_te)
             if call.return_response:
                 # Pydantic 1.x uses .dict() instead of model_dump()
                 return edited_te.dict()

@@ -6,8 +6,10 @@
         "devcontainer",
         "doctoc",
         "HACS",
+        "hass",
         "hassfest",
         "isort",
-        "peterdavehello"
+        "peterdavehello",
+        "Pydantic"
     ]
 }
