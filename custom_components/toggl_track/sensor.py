@@ -20,7 +20,6 @@ from .const import (
     ATTR_PROJECT_ID,
     ATTR_START,
     ATTR_STOP,
-    ATTR_TAG_IDS,
     ATTR_TAGS,
     ATTR_TASK_ID,
     ATTR_USER_ID,
@@ -42,8 +41,8 @@ TE_SPECIFIC_ATTR_KEYS = [
     ATTR_PROJECT_ID,
     ATTR_TASK_ID,
     ATTR_USER_ID,
+    # See note below; we don't expose tag IDs independently; they're zipped up with tag names
     ATTR_TAGS,
-    ATTR_TAG_IDS,
     ATTR_WORKSPACE_ID,
 ]
 
@@ -90,7 +89,8 @@ async def async_setup_entry(
 
 
 # Long term, would be nice to have workspace selection as part of init/options flow
-# But for now, just create a sensor for each workspace. User can always disable the ones they don't want
+# But for now, just create a sensor for each workspace. User can always disable the
+#   ones they don't want
 # This way we have an easy / user-friendly way to show the workspace name and ID
 # Then can select other workspace entities in the create time track service call...
 ##
@@ -133,7 +133,6 @@ class TogglTrackWorkspaceSensorEntity(
         }
 
         # If things went well, coordinator should have already fetched the current time entry
-        # Check and use it's values for state/attrs so we don't have to wait for the next update in ~ 60s
         self._update_state()
 
     def _do_empty_state(self) -> None:
@@ -165,20 +164,35 @@ class TogglTrackWorkspaceSensorEntity(
             self._do_empty_state()
             return
 
-        # If there is a time entry running, set all the attributes that are specific to it.
-        # We don't bother with tag and tag IDs individually; zip them up into a dict.
+        # The critical bit of data is the name/description of the time entry
         self._state = self.coordinator.data.description
 
+        # All the other data associated with a time entry becomes an attribute
         for k in TE_SPECIFIC_ATTR_KEYS:
             self._attrs[k] = getattr(self.coordinator.data, k)
 
-        # Everything copied in, zip up then clean up
-        self._attrs[ATTR_TAGS] = dict(
-            # Strict=True as the strings and ints should always be in sync / same length :).
-            zip(self._attrs[ATTR_TAG_IDS], self._attrs[ATTR_TAGS], strict=True)
-        )
-        # We just zipped together; don't need this anymore
-        self._attrs.pop(ATTR_TAG_IDS)
+        # Rather than have two separate lists, we can just zip together the tag IDs and tag names
+        # Note: The API docs don't explicitly say there is a 1:1 map between tag IDs and tag names
+        #  e.g it is not explicitly stated that the 3rd integer in tag_ids belongs to the 3rd string
+        # In testing this does seem to be the case, though so we just zip things up to mae it easier
+        #   to work with in the HA UI / templates ... etc
+        ##
+        if (
+            self.coordinator.data.tag_ids is not None
+            and self.coordinator.data.tags is not None
+        ):
+            # Everything copied in, zip up then clean up
+            self._attrs[ATTR_TAGS] = dict(
+                zip(
+                    self.coordinator.data.tag_ids,
+                    self.coordinator.data.tags,
+                    # Raise an error if the lengths don't match
+                    strict=True,
+                )
+            )
+        else:
+            self._attrs[ATTR_TAGS] = {}
+
         # This is a bit of a hack, but it works
         # For reasons that are going to suck to track down, the workspace ID is
         #   showing up as an integer when first set but as soon as we get a None for
