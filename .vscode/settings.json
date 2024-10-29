@@ -5,6 +5,7 @@
         "commitish",
         "devcontainer",
         "doctoc",
+        "finalizer",
         "HACS",
         "hass",
         "hassfest",

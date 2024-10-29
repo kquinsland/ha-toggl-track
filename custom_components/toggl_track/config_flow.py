@@ -2,7 +2,7 @@
 
 from http import HTTPStatus
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from aiohttp.client_exceptions import ClientResponseError
 from lib_toggl.account import Account
@@ -97,7 +97,7 @@ class TogglTrackConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # See:  https://developers.home-assistant.io/docs/integration_setup_failures
         # TODO: raise: ConfigValidationError?
         except ClientResponseError as http_err:
-            _LOGGER.error("Error creating entry", extra={"http_err": http_err})
+            _LOGGER.error("Error creating entry. http_err: %s", http_err)
             if http_err.status == HTTPStatus.UNAUTHORIZED:
                 errors[CONF_API_KEY] = "unauthorized"
             if http_err.status == HTTPStatus.FORBIDDEN:
@@ -105,16 +105,21 @@ class TogglTrackConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             else:
                 errors[CONF_API_KEY] = "cannot_connect"
 
-        except Exception as e:  # pylint: disable=broad-except
-            _LOGGER.error("Error creating entry", extra={"e": e})
+        except Exception as e:  # noqa: BLE001
+            _LOGGER.error("Error creating entry. e: %s", e)
             errors[CONF_API_KEY] = "unknown"
+            # Hacky info gathering for https://github.com/kquinsland/ha-toggl-track/issues/19
+            _LOGGER.error("Exception on entity.create. e: %s", e)
 
         if errors:
             _LOGGER.debug(
                 "Errors in user input. Showing form again. Errors: %s", errors
             )
             return self.async_show_form(
-                step_id="user", data_schema=AUTH_SCHEMA, errors=errors
+                step_id="user",
+                data_schema=AUTH_SCHEMA,
+                errors=errors,
+                description_placeholders={"profile_url": TOGGL_TRACK_PROFILE_URL},
             )
 
         # No errors in user input and we have a valid API key, ask user to select workspaces
