@@ -45,7 +45,7 @@ class TogglTrackConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Toggl Track."""
 
     VERSION = 1
-    MINOR_VERSION = 0
+    MINOR_VERSION = 1
 
     # We need to instantiate a Toggl API client to validate the API key and
     # get the user's account details for uuid generation.

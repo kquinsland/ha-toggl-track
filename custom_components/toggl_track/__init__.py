@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
 import logging
-
-from lib_toggl.client import Toggl
+from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_API_KEY, CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant
+from lib_toggl.client import Toggl
 
 from .const import DOMAIN, STARTUP_MESSAGE
 from .coordinator import TogglTrackCoordinator
@@ -84,3 +83,38 @@ async def async_update_options(hass: HomeAssistant, config_entry: ConfigEntry) -
     # TODO: fetch workspace list again and do the user flow again?
     _LOGGER.debug("Reloading. Currently nothing to do here")
     await hass.config_entries.async_reload(config_entry.entry_id)
+
+
+async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    """Migrate old configuration entries."""
+
+    if config_entry.version > 1:
+        _LOGGER.error(
+            "Cannot migrate from version %s.%s. This version is from the future?!",
+            config_entry.version,
+            config_entry.minor_version,
+        )
+        return False
+
+    _LOGGER.debug(
+        "Attempting to migrate configuration from version %s.%s",
+        config_entry.version,
+        config_entry.minor_version,
+    )
+
+    if config_entry.version == 1:
+        # 0 -> 1: int becomes string
+        #   See: https://github.com/kquinsland/ha-toggl-track/issues/25
+        if config_entry.minor_version == 0:
+            minor_version = 1
+            hass.config_entries.async_update_entry(
+                config_entry,
+                unique_id=str(config_entry.unique_id),
+                minor_version=minor_version,
+            )
+            _LOGGER.debug(
+                "Migration to %s.%s successful!",
+                config_entry.version,
+                minor_version,
+            )
+            return True
