@@ -1,0 +1,45 @@
+{
+  "folders": [
+    {
+      "path": ".."
+    }
+  ],
+  "settings": {
+    "[python]": {
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit",
+        "source.organizeImports": "explicit"
+      },
+      "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "cSpell.words": [
+      "autofix",
+      "autolabeler",
+      "commitish",
+      "devcontainer",
+      "doctoc",
+      "finalizer",
+      "HACS",
+      "hass",
+      "hassfest",
+      "isort",
+      "peterdavehello",
+      "Pydantic"
+    ],
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.vscode-pylance",
+      "ms-python.python",
+      "streetsidesoftware.code-spell-checker",
+      "editorconfig.editorconfig",
+      "davidanson.vscode-markdownlint",
+      "yzhang.markdown-all-in-one",
+      "tamasfe.even-better-toml"
+    ]
+  }
+}
