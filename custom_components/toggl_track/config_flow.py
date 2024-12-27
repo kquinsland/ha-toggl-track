@@ -1,23 +1,22 @@
 """implements graphical configuration flow for setting up Toggl Track integration."""
 
-from http import HTTPStatus
 import logging
+from http import HTTPStatus
 from typing import Any
 
-from aiohttp.client_exceptions import ClientResponseError
-from lib_toggl.account import Account
-from lib_toggl.client import Toggl
+import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-
+from aiohttp.client_exceptions import ClientResponseError
 from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_SCAN_INTERVAL
 from homeassistant.data_entry_flow import FlowResult
-import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.selector import (
     TextSelector,
     TextSelectorConfig,
     TextSelectorType,
 )
+from lib_toggl.account import Account
+from lib_toggl.client import Toggl
 
 from .const import CONF_WORKSPACES, DOMAIN, TOGGL_TRACK_PROFILE_URL
 
@@ -92,7 +91,7 @@ class TogglTrackConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
                 # Nothing blew up? Use toggl account ID as unique ID for this entry
                 # Email can be changed, account ID cannot
-                await self.async_set_unique_id(self._acct_details.id)
+                await self.async_set_unique_id(str(self._acct_details.id))
 
         # See:  https://developers.home-assistant.io/docs/integration_setup_failures
         # TODO: raise: ConfigValidationError?
