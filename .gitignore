@@ -3,6 +3,7 @@ env/
 __pycache__/
 .idea/
 venv/
+.venv/
 coverage.xml
 *.egg-info/
 .tox
