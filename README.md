@@ -34,10 +34,6 @@ Any issues with the Toggl API should be reported to the [lib-toggl](https://gith
 
 ## Installation
 
-> **Note**
-> As of _now_ `lib-toggl` can't be **safely** installed into Home Assistant via HACS.
-> See [issue #1](https://github.com/kquinsland/ha-toggl-track/issues/1) for details on how to install it manually if you're so inclined.
-
 ### HACS
 
 Add this repo to HACS as a custom repository and then the integration can be installed from the HACS UI.
