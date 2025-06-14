@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import timedelta
+import logging
+
+from lib_toggl.client import Toggl
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_API_KEY, CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant
-from lib_toggl.client import Toggl
 
 from .const import DOMAIN, STARTUP_MESSAGE
 from .coordinator import TogglTrackCoordinator
@@ -117,4 +118,4 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry) ->
                 config_entry.version,
                 minor_version,
             )
-            return True
+    return True

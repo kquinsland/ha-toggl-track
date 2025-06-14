@@ -1,26 +1,36 @@
 """implements graphical configuration flow for setting up Toggl Track integration."""
 
-import logging
 from http import HTTPStatus
+import logging
 from typing import Any
 
-import homeassistant.helpers.config_validation as cv
-import voluptuous as vol
 from aiohttp.client_exceptions import ClientResponseError
+from lib_toggl.account import Account
+from lib_toggl.client import Toggl
+import voluptuous as vol
+
 from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_SCAN_INTERVAL
 from homeassistant.data_entry_flow import FlowResult
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.selector import (
     TextSelector,
     TextSelectorConfig,
     TextSelectorType,
 )
-from lib_toggl.account import Account
-from lib_toggl.client import Toggl
 
-from .const import CONF_WORKSPACES, DOMAIN, TOGGL_TRACK_PROFILE_URL
+from .const import (
+    CONF_WORKSPACES,
+    DEFAULT_POLL_INTERVAL_SECONDS,
+    DOMAIN,
+    MAX_POLL_INTERVAL_SECONDS,
+    MIN_POLL_INTERVAL_SECONDS,
+    TOGGL_TRACK_PROFILE_URL,
+)
 
 _LOGGER = logging.getLogger(__name__)
+
+_poll_range = vol.Range(min=MIN_POLL_INTERVAL_SECONDS, max=MAX_POLL_INTERVAL_SECONDS)
 
 # Toggl does support a few different auth mechanisms but for now, API key is all that's supported here
 AUTH_SCHEMA = vol.Schema(
@@ -33,10 +43,11 @@ AUTH_SCHEMA = vol.Schema(
                 autocomplete="current-password",
             )
         ),
-        # Allow user to set the polling interval; no faster than 30 seconds, no slower than 10 minutes
         vol.Optional(
-            CONF_SCAN_INTERVAL, default=60, description="Toggl Track Polling interval"
-        ): vol.All(vol.Coerce(int), vol.Range(min=30, max=600)),
+            CONF_SCAN_INTERVAL,
+            default=DEFAULT_POLL_INTERVAL_SECONDS,
+            description="Toggl Track Polling interval",
+        ): vol.All(vol.Coerce(int), _poll_range),
     }
 )
 
@@ -50,7 +61,6 @@ class TogglTrackConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     # We need to instantiate a Toggl API client to validate the API key and
     # get the user's account details for uuid generation.
     ##
-
     def __init__(self) -> None:
         """Account details are how we confirm API key works and get the user's uuid.
 
@@ -61,6 +71,61 @@ class TogglTrackConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         self._acct_details: Account = None
         self._workspaces: dict[str, int] = None
+
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle user initialted Reconfigure step.
+
+        Allows changing the polling interval.
+
+        TODO: API key? or is there a better flow for that?
+        """
+        errors: dict[str, str] = {}
+
+        # It's not immediately obvious if there's a better way to do this...
+        # Need to get access to the already instantiated TogglTrackCoordinator instance so we can get the scan interval.
+        # This way, the reconfigure step can show the current scan interval as the default value in the form to inform the user of the current value.
+        # Fortunately, we don't have to modify the value of the scan interval in the coordinator, it's updated / persisted on async_update_reload_and_abort()
+        ##
+        # TODO: assert/check?
+        _entry_id = self._get_reconfigure_entry().entry_id
+        _coordinator = self.hass.data[DOMAIN][_entry_id]
+        self._scan_interval = _coordinator.update_interval.total_seconds()
+        _LOGGER.debug("Scan interval: %s", self._scan_interval)
+
+        SCAN_INTERVAL_SCHEMA = vol.Schema(
+            {
+                vol.Required(
+                    CONF_SCAN_INTERVAL,
+                    # When default is not specified, seems to fall back to the minimum value specified in _poll_range
+                    default=self._scan_interval,
+                    description="Toggl Track Polling interval",
+                ): vol.All(vol.Coerce(int), _poll_range),
+            }
+        )
+
+        if user_input is None:
+            return self.async_show_form(
+                step_id="reconfigure",
+                data_schema=SCAN_INTERVAL_SCHEMA,
+                errors=errors,
+            )
+
+        if user_input:
+            if CONF_SCAN_INTERVAL not in user_input:
+                # TODO: double check that this is the right error key for strings.json
+                errors[CONF_SCAN_INTERVAL] = "required"
+                return self.async_show_form(
+                    step_id="reconfigure",
+                    data_schema=SCAN_INTERVAL_SCHEMA,
+                    errors=errors,
+                )
+
+        return self.async_update_reload_and_abort(
+            self._get_reconfigure_entry(),
+            data_updates=user_input,
+        )
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
