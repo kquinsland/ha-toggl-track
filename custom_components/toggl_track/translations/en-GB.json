@@ -2,16 +2,26 @@
   "title": "Toggl Track",
   "config": {
     "step": {
+      "reconfigure": {
+        "title": "Reconfigure Toggl Track",
+        "description": "Adjust Toggl Track polling settings. Free users can poll 30 times per hour, Starter users can poll 120 and Premium users can poll 300 times per hour.",
+        "data": {
+          "scan_interval": "Polling Interval (in seconds)"
+        },
+        "data_description": {
+          "scan_interval": "How often to poll Toggl Track for new data."
+        }
+      },
       "user": {
         "title": "User Authentication",
-        "description": "Please enter your API token from your [Toggl Track Profile page]({profile_url})",
+        "description": "Please enter your API token from your [Toggl Track Profile page]({profile_url}).",
         "data": {
           "api_key": "Toggl Track API Key",
-          "refresh_interval_sec": "Polling Interval (in seconds)"
+          "scan_interval": "Polling Interval (in seconds)"
         },
         "data_description": {
           "api_key": "Get this from your Toggl Track Profile.",
-          "refresh_interval_sec": "How often to poll Toggl Track for new data."
+          "scan_interval": "How often to poll Toggl Track for new data."
         }
       },
       "workspaces": {
@@ -32,8 +42,9 @@
       "already_configured": "[%key:common::config_flow::error::already_configured%]"
     },
     "abort": {
-      "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]",
-      "unknown": "Unknown error occurred. Check logs for more details."
+      "single_instance_allowed": "At this time, only a single Toggl Track account is allowed.",
+      "unknown": "Unknown error occurred. Check logs for more details.",
+      "reconfigure_successful": "Re-configuration was successful."
     },
     "create_entry": {
       "default": "Authentication validated."

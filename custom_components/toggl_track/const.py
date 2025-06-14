@@ -3,7 +3,7 @@
 DOMAIN = "toggl_track"
 
 # TODO: set up CI/CD and bump version to match manifest.json
-INTEGRATION_VERSION = "0.1.3"
+INTEGRATION_VERSION = "0.1.4"
 ISSUE_URL = "https://github.com/kquinsland/ha-toggl/issues"
 
 
@@ -19,6 +19,15 @@ If you have any issues with this you need to open an issue here:
 
 CONF_WORKSPACES = "workspaces"
 TOGGL_TRACK_PROFILE_URL = "https://track.toggl.com/profile"
+
+# As is tradition with Toggl, I can find a few different but equally vague references to the polling interval.
+# The email they sent indicates that free users get 30 requests per hour, Starter gets 120 requests per hour and
+# Premium gets 300 requests per hour. They also hint that enterprise users can get higher limits but i'm going to
+# ignore that and cap the polling interval minimum at 30 seconds.
+MIN_POLL_INTERVAL_SECONDS = 30
+MAX_POLL_INTERVAL_SECONDS = 600
+# Default assume free user, so 120 seconds between polls
+DEFAULT_POLL_INTERVAL_SECONDS = 120
 
 ## Internals; Time Entry / Workspace ...etc Attributes
 
