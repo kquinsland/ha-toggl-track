@@ -37,7 +37,7 @@ repos:
       - id: python-check-blanket-noqa
 
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.32.0
+    rev: v1.37.1
     hooks:
       - id: yamllint
         args: [-c=.yamllint.yaml]
