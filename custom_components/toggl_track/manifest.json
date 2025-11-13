@@ -6,7 +6,7 @@
   "dependencies": [
     "sensor"
   ],
-  "documentation": "https://github.com/kquinsland/ha-toggl/",
+  "documentation": "https://github.com/kquinsland/ha-toggl-track/",
   "domain": "toggl_track",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/kquinsland/ha-toggl-track/issues",
