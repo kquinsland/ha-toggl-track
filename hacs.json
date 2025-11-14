@@ -1,5 +1,5 @@
 {
+  "homeassistant": "2022.12.0",
   "name": "Toggl Track",
-  "render_readme": true,
-  "homeassistant": "2022.12.0"
+  "render_readme": true
 }

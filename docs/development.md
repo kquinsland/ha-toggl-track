@@ -1,3 +1,17 @@
+<!-- markdownlint-disable MD041 -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Development](#development)
+  - [Setup](#setup)
+    - [HA Dev Containers](#ha-dev-containers)
+    - [`doctoc`](#doctoc)
+    - [pre-commit](#pre-commit)
+  - [HA Logging](#ha-logging)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Development
 
 Mostly just quick/dirty notes for myself.
