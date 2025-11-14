@@ -1,20 +1,31 @@
 {
-  "title": "Toggl Track",
   "config": {
+    "abort": {
+      "reconfigure_successful": "Re-configuration was successful.",
+      "single_instance_allowed": "At this time, only a single Toggl Track account is allowed.",
+      "unknown": "Unknown error occurred. Check logs for more details."
+    },
+    "create_entry": {
+      "default": "Authentication validated."
+    },
+    "error": {
+      "already_configured": "[%key:common::config_flow::error::already_configured%]",
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "forbidden": "[%key:common::config_flow::error::invalid_api_key%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
     "step": {
       "reconfigure": {
-        "title": "Reconfigure Toggl Track",
-        "description": "Adjust Toggl Track polling settings. Free users can poll 30 times per hour, Starter users can poll 120 and Premium users can poll 300 times per hour.",
         "data": {
           "scan_interval": "Polling Interval (in seconds)"
         },
         "data_description": {
           "scan_interval": "How often to poll Toggl Track for new data."
-        }
+        },
+        "description": "Adjust Toggl Track polling settings. Free users can poll 30 times per hour, Starter users can poll 120 and Premium users can poll 300 times per hour.",
+        "title": "Reconfigure Toggl Track"
       },
       "user": {
-        "title": "User Authentication",
-        "description": "Please enter your API token from your [Toggl Track Profile page]({profile_url}).",
         "data": {
           "api_key": "Toggl Track API Key",
           "scan_interval": "Polling Interval (in seconds)"
@@ -22,119 +33,108 @@
         "data_description": {
           "api_key": "Get this from your Toggl Track Profile.",
           "scan_interval": "How often to poll Toggl Track for new data."
-        }
+        },
+        "description": "Please enter your API token from your [Toggl Track Profile page]({profile_url}).",
+        "title": "User Authentication"
       },
       "workspaces": {
-        "title": "Workspace Selection",
-        "description": "Select the Workspace(s) to create sensors for.",
         "data": {
           "workspaces": "Workspaces"
         },
         "data_description": {
           "workspaces": "Get this from your Toggl Track Profile."
-        }
-      }
-    },
-    "error": {
-      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
-      "forbidden": "[%key:common::config_flow::error::invalid_api_key%]",
-      "unknown": "[%key:common::config_flow::error::unknown%]",
-      "already_configured": "[%key:common::config_flow::error::already_configured%]"
-    },
-    "abort": {
-      "single_instance_allowed": "At this time, only a single Toggl Track account is allowed.",
-      "unknown": "Unknown error occurred. Check logs for more details.",
-      "reconfigure_successful": "Re-configuration was successful."
-    },
-    "create_entry": {
-      "default": "Authentication validated."
-    }
-  },
-  "services": {
-    "new_time_entry": {
-      "name": "New Time Entry",
-      "description": "Creates a new Time Entry.",
-      "fields": {
-        "description": {
-          "name": "Description",
-          "description": "Time Entry title."
         },
-        "workspace_id": {
-          "name": "Workspace ID",
-          "description": "Numeric ID of the Workspace to create the Time Entry in."
-        },
-        "workspace_id_entity_id": {
-          "name": "Workspace Entity",
-          "description": "Entity with `workspace_id` attribute."
-        },
-        "tags": {
-          "name": "Tags",
-          "description": "Strings to associate with the Time Entry."
-        },
-        "created_with": {
-          "name": "Created With",
-          "description": "Unique string to identify the app that created the Time Entry. Different from Tags, not typically displayed."
-        },
-        "billable": {
-          "name": "Billable",
-          "description": "Indicates whether the Time Entry is billable or not."
-        }
-      }
-    },
-    "stop_time_entry": {
-      "name": "Stop Time Entry",
-      "description": "Stops currently running Time Entry.",
-      "fields": {
-        "workspace_id": {
-          "name": "Workspace ID",
-          "description": "Numeric ID of the Workspace to create the Time Entry in."
-        },
-        "time_entry_id": {
-          "name": "Time Entry ID",
-          "description": "Numeric ID of the specific Time Entry to edit."
-        },
-        "workspace_id_entity_id": {
-          "name": "Workspace Entity",
-          "description": "Entity with `workspace_id` attribute."
-        }
-      }
-    },
-    "edit_time_entry": {
-      "name": "Edit Time Entry",
-      "description": "Edits a Time Entry.",
-      "fields": {
-        "description": {
-          "name": "Description",
-          "description": "Time Entry title."
-        },
-        "workspace_id": {
-          "name": "Workspace ID",
-          "description": "Numeric ID of the Workspace the Time Entry belongs to."
-        },
-        "time_entry_id": {
-          "name": "Time Entry ID",
-          "description": "Numeric ID of the specific Time Entry to edit."
-        },
-        "workspace_id_entity_id": {
-          "name": "Workspace Entity",
-          "description": "Entity with `workspace_id` attribute."
-        },
-        "tags": {
-          "name": "Tags",
-          "description": "Strings to associate with the Time Entry."
-        }
+        "description": "Select the Workspace(s) to create sensors for.",
+        "title": "Workspace Selection"
       }
     }
   },
   "exceptions": {
-    "te_ws_ids_xor_entity_id": {
-      "message": "Either Workspace Sensor Entity OR both Workspace ID AND Time Entry ID must be provided."
+    "cant_fetch_te_id_from_entity_id": {
+      "message": "Time Entry ID could not be fetched from the provided Sensor Entity ({entity_id})."
     },
     "cant_fetch_ws_id_from_entity_id": {
       "message": "Workspace ID could not be fetched from the provided Sensor Entity ({entity_id})."
     },
-    "cant_fetch_te_id_from_entity_id": {
-      "message": "Time Entry ID could not be fetched from the provided Sensor Entity ({entity_id})."
+    "te_ws_ids_xor_entity_id": {
+      "message": "Either Workspace Sensor Entity OR both Workspace ID AND Time Entry ID must be provided."
     }
-  }
+  },
+  "services": {
+    "edit_time_entry": {
+      "description": "Edits a Time Entry.",
+      "fields": {
+        "description": {
+          "description": "Time Entry title.",
+          "name": "Description"
+        },
+        "tags": {
+          "description": "Strings to associate with the Time Entry.",
+          "name": "Tags"
+        },
+        "time_entry_id": {
+          "description": "Numeric ID of the specific Time Entry to edit.",
+          "name": "Time Entry ID"
+        },
+        "workspace_id": {
+          "description": "Numeric ID of the Workspace the Time Entry belongs to.",
+          "name": "Workspace ID"
+        },
+        "workspace_id_entity_id": {
+          "description": "Entity with `workspace_id` attribute.",
+          "name": "Workspace Entity"
+        }
+      },
+      "name": "Edit Time Entry"
+    },
+    "new_time_entry": {
+      "description": "Creates a new Time Entry.",
+      "fields": {
+        "billable": {
+          "description": "Indicates whether the Time Entry is billable or not.",
+          "name": "Billable"
+        },
+        "created_with": {
+          "description": "Unique string to identify the app that created the Time Entry. Different from Tags, not typically displayed.",
+          "name": "Created With"
+        },
+        "description": {
+          "description": "Time Entry title.",
+          "name": "Description"
+        },
+        "tags": {
+          "description": "Strings to associate with the Time Entry.",
+          "name": "Tags"
+        },
+        "workspace_id": {
+          "description": "Numeric ID of the Workspace to create the Time Entry in.",
+          "name": "Workspace ID"
+        },
+        "workspace_id_entity_id": {
+          "description": "Entity with `workspace_id` attribute.",
+          "name": "Workspace Entity"
+        }
+      },
+      "name": "New Time Entry"
+    },
+    "stop_time_entry": {
+      "description": "Stops currently running Time Entry.",
+      "fields": {
+        "time_entry_id": {
+          "description": "Numeric ID of the specific Time Entry to edit.",
+          "name": "Time Entry ID"
+        },
+        "workspace_id": {
+          "description": "Numeric ID of the Workspace to create the Time Entry in.",
+          "name": "Workspace ID"
+        },
+        "workspace_id_entity_id": {
+          "description": "Entity with `workspace_id` attribute.",
+          "name": "Workspace Entity"
+        }
+      },
+      "name": "Stop Time Entry"
+    }
+  },
+  "title": "Toggl Track"
 }
