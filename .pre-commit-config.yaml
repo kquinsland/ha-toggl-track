@@ -1,10 +1,7 @@
 ---
-default_language_version:
-  python: python3.11
-
 repos:
   - repo: https://github.com/thlorenz/doctoc
-    rev: ... # substitute a tagged version
+    rev: v2.2.0 # substitute a tagged version
     hooks:
       - id: doctoc
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -16,25 +13,46 @@ repos:
       - id: check-yaml
       - id: end-of-file-fixer
       - id: check-json
+        exclude: |
+          (?x)^(
+              ^.vscode/.*\.json
+          )$
       - id: pretty-format-json
+        exclude: |
+          (?x)^(
+              ^.vscode/.*\.json
+          )$
         args:
           - --autofix
+          # Note: this hook does not honor the .editorconfig value so
+          #   they need to be kept in sync manually
+          - --indent=2
       - id: detect-aws-credentials
         args:
           - --allow-missing-credentials
       - id: detect-private-key
 
-  - repo: https://github.com/PyCQA/isort
-    # See: https://github.com/PyCQA/isort/releases
-    rev: 6.0.1
+  # Make sure python is well formed
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.13.3
     hooks:
-      - id: isort
+      # Lint, fixing what can be automatically fixed
+      - id: ruff
+        args: [--fix]
+      # Format to ensure consistent style
+      - id: ruff-format
 
-  - repo: https://github.com/pre-commit/pygrep-hooks
-    # See: https://github.com/pre-commit/pygrep-hooks/tags
-    rev: v1.10.0
+  # TODO/aspirational: clean up GHA to follow best practices
+  # - repo: https://github.com/zizmorcore/zizmor-pre-commit
+  #   rev: v1.14.2
+  #   hooks:
+  #     - id: zizmor
+
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 41.136.0
     hooks:
-      - id: python-check-blanket-noqa
+      - id: renovate-config-validator
+        args: [--strict]
 
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.37.1
