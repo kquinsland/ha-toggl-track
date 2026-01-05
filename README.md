@@ -62,7 +62,7 @@ You can then add the integration via the UI.
 After installing the integration, you'll need to add and configure it via the UI.
 
 You will need to provide an API token and can optionally change how often the integration polls the Toggl Track API.
-The default is 60 seconds and should be fine for most people but can be [adjusted](custom_components/toggl_track/config_flow.py#L40) as needed.
+The default is 120 seconds and should be fine for most people but can be [adjusted](custom_components/toggl_track/config_flow.py#L40) as needed.
 
 Assuming your API token works, you'll be shown a list of workspaces.
 Unless you're a premium user, you'll only have one workspace.
