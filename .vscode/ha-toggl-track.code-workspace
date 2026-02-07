@@ -27,6 +27,7 @@
       "hass",
       "hassfest",
       "isort",
+      "noqa",
       "peterdavehello",
       "Pydantic"
     ],
