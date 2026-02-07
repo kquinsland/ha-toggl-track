@@ -1,7 +1,9 @@
 ---
 repos:
   - repo: https://github.com/thlorenz/doctoc
-    rev: v2.2.0 # substitute a tagged version
+    rev: v2.2.0
+    exclude: |
+      AGENTS.md
     hooks:
       - id: doctoc
   - repo: https://github.com/pre-commit/pre-commit-hooks
