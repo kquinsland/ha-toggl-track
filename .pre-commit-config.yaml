@@ -2,10 +2,9 @@
 repos:
   - repo: https://github.com/thlorenz/doctoc
     rev: v2.2.0
-    exclude: |
-      AGENTS.md
     hooks:
       - id: doctoc
+        exclude: AGENTS.md
   - repo: https://github.com/pre-commit/pre-commit-hooks
     # See: https://github.com/pre-commit/pre-commit-hooks/releases
     rev: v6.0.0
